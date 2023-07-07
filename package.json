@@ -1,0 +1,24 @@
+{
+  "name": "human-ids",
+  "version": "1.0.0",
+  "description": "A library to generate human readable IDs",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --reporters=default --reporters=jest-html-reporter"
+  },
+  "keywords": [
+    "readable",
+    "ids",
+    "humans",
+    "for-humans",
+    "human-ids",
+    "simple",
+    "simple-ids"
+  ],
+  "author": "JC Mujica",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^29.6.1",
+    "jest-html-reporter": "^3.10.1"
+  }
+}
