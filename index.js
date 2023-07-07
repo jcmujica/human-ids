@@ -1,6 +1,20 @@
 const dictionaries = require('./dictionaries');
 
-function generateId(settings = {}) {
+const defaultSettings = {
+  lang: 'en',
+  adjective: true,
+  color: true,
+  noun: true,
+  number: {
+    min: 0,
+    max: 999,
+    sets: 1,
+    completeWithZeros: false,
+  },
+};
+
+function generateId(userSettings = {}) {
+  const settings = Object.assign({}, defaultSettings, userSettings);
   const lang = dictionaries[settings.lang] ? settings.lang : dictionaries[settings.lang?.split('-')[0]] ? settings.lang?.split('-')[0] : 'en';
   const useAdjective = settings.adjective || false;
   const useColor = settings.color || false;
@@ -63,5 +77,7 @@ function generateId(settings = {}) {
 
   return parts.join('-');
 }
+
+console.log(generateId())
 
 module.exports = generateId;
