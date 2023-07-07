@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [1.0.3] - 2023-07-07
+
+### Added
+- Added default settings
 ## [1.0.2] - 2023-07-07
 
 ### Changed
