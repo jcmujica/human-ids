@@ -5,6 +5,8 @@ const defaultSettings = {
   adjective: true,
   color: true,
   noun: true,
+  randomOrder: false,
+  separator: '-',
   number: {
     min: 0,
     max: 999,
@@ -38,15 +40,15 @@ function generateId(userSettings = {}) {
   }
 
   function getAdjectives() {
-    return dictionaries[lang].adjectives;
+    return settings.dictionary && settings.dictionary.adjectives ? settings.dictionary.adjectives : {};
   }
 
   function getColors() {
-    return dictionaries[lang].colors;
+    return settings.dictionary && settings.dictionary.colors ? settings.dictionary.colors : {};
   }
 
   function getNouns() {
-    return dictionaries[lang].nouns;
+    return settings.dictionary && settings.dictionary.nouns ? settings.dictionary.nouns : {};
   }
 
   const parts = [];
@@ -75,7 +77,11 @@ function generateId(userSettings = {}) {
     parts.push(formattedNumber);
   }
 
-  return parts.join('-');
+  if (settings.randomOrder) {
+    parts.sort(() => Math.random() - 0.5);
+  }
+
+  return parts.join(`${settings.separator}`);
 }
 
 module.exports = generateId;

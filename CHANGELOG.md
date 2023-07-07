@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [1.0.10] - 2023-07-07
+
+### Added
+- Added separator customization
+- Added random ordering for segments
+- Added support for custom dictionary
 ## [1.0.9] - 2023-07-07
 
 ### Changed

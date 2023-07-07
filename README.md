@@ -30,6 +30,25 @@ npm install human-ids
 ```javascript
 import humanId from 'human-ids'
 
+//If using a custom dictionary
+const customDictionary = {
+  adjectives: {
+    awesome: 'awesome',
+    amazing: 'amazing',
+    // ...
+  },
+  colors: {
+    red: 'red',
+    blue: 'blue',
+    // ...
+  },
+  nouns: {
+    cat: 'cat',
+    dog: 'dog',
+    // ...
+  },
+};
+
 // Initialize the settings object (these are the defaults)
 const settings = {
   lang: 'en',
@@ -55,6 +74,8 @@ The settings object allows you to customize the ID generation process. The avail
     adjective: Set to true to include an adjective in the ID (default: false).
     color: Set to true to include a color in the ID (default: false).
     noun: Set to true to include a noun in the ID (default: false).
+    randomOrder: Set to true to include a random order in the ID segments (default: false).
+    separator: Set to true to change a separator in the ID
     number: An object that configures the number part of the ID:
         min: The minimum value of the number (default: 0).
         max: The maximum value of the number (default: 999).
