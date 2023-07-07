@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [1.0.4] - 2023-07-07
+
+### Fixed
+- Fixed module definition
 ## [1.0.3] - 2023-07-07
 
 ### Added

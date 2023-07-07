@@ -1,5 +1,5 @@
 declare module 'human-ids' {
-  export interface IdGeneratorSettings {
+  interface IdGeneratorSettings {
     lang: string;
     adjective?: boolean;
     color?: boolean;
@@ -8,12 +8,10 @@ declare module 'human-ids' {
       min?: number;
       max?: number;
       completeWithZeros?: boolean;
-      sets?: number;
     };
   }
 
-  export default class IdGenerator {
-    constructor(settings?: IdGeneratorSettings);
-    generateId(): string;
-  }
+  function generateId(settings?: IdGeneratorSettings): string;
+
+  export = generateId;
 }
