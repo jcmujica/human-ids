@@ -43,7 +43,7 @@ const settings = {
   },
 };
 
-// Generate an ID using the class instance
+// Generate an ID using the function
 console.log(humanId())
 ```
 ## Configuration
