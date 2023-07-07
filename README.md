@@ -25,6 +25,7 @@ To use Human IDs in your project, you can install it via npm:
 ```she
 npm install human-ids
 ```
+## Usage example
 
 ```javascript
 import humanId from 'human-ids'
