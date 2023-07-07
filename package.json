@@ -20,5 +20,9 @@
   "devDependencies": {
     "jest": "^29.6.1",
     "jest-html-reporter": "^3.10.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jcmujica/human-ids"
+  },
 }
