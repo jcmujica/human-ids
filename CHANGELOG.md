@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [1.0.6] - 2023-07-07
+
+### Changed
+- Changed README.md to correctly display usage information
 ## [1.0.5] - 2023-07-07
 
 ### Remove
