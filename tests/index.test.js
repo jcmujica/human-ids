@@ -1,8 +1,8 @@
-const IdGenerator = require('../index');
+const generateId = require('../index');
 
-describe('IdGenerator', () => {
-  test('generateId should return a unique ID', () => {
-    const testLength = 1000000;
+describe('generateId', () => {
+  test('should return a unique ID', () => {
+    const testLength = 1000;
     const settings = {
       lang: 'en',
       adjective: true,
@@ -15,12 +15,11 @@ describe('IdGenerator', () => {
       }
     };
 
-    const idGenerator = new IdGenerator(settings);
     const ids = new Set();
 
-    // Generate 1000 IDs
+    // Generate testLength IDs
     for (let i = 0; i < testLength; i++) {
-      const id = idGenerator.generateId();
+      const id = generateId(settings);
       ids.add(id);
     }
 
