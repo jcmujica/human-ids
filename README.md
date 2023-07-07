@@ -6,6 +6,18 @@ A library to generate human-readable IDs.
 
 Human IDs is a JavaScript library that allows you to generate human-readable IDs. The IDs consist of a combination of adjectives, colors, nouns, and numbers, creating unique and memorable identifiers.
 
+Supports English and Spanish
+## Output example
+    bubbly-beige-fire-38
+    breezy-teal-faith-870
+    silly-indigo-imagination-440
+    genuine-turquoise-light-718
+    bubbly-purple-pen-450
+    genuine-silver-magic-935
+    delightful-brown-planet-642
+    cozy-orange-boat-449
+    excelente-morado-creatividad-829
+    energetico-oliva-libertad-765
 ## Installation
 
 To use Human IDs in your project, you can install it via npm:
@@ -15,27 +27,24 @@ npm install human-ids
 ```
 
 ```javascript
-const IdGenerator = require('human-ids');
+import humanId from 'human-ids'
 
-// Initialize the settings object
+// Initialize the settings object (these are the defaults)
 const settings = {
-  lang: 'es',
+  lang: 'en',
   adjective: true,
+  color: true,
   noun: true,
   number: {
     min: 0,
     max: 999,
-    completeWithZeros: true,
-    sets: 3
-  }
+    sets: 1,
+    completeWithZeros: false,
+  },
 };
 
-// Create an instance of the IdGenerator class
-const idGenerator = new IdGenerator(settings);
-
 // Generate an ID using the class instance
-const id = idGenerator.generateId();
-console.log(id);
+console.log(humanId())
 ```
 ## Configuration
 
