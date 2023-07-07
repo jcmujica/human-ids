@@ -78,6 +78,4 @@ function generateId(userSettings = {}) {
   return parts.join('-');
 }
 
-console.log(generateId())
-
 module.exports = generateId;

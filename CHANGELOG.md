@@ -4,7 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-## [1.0.7] - 2023-07-07
+## [1.0.9] - 2023-07-07
+
+### Changed
+- Changed removed init console.log
+## [1.0.8] - 2023-07-07
 
 ### Changed
 - Changed README.md to correctly display usage information
