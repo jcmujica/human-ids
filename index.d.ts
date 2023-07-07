@@ -12,13 +12,13 @@ declare module 'human-ids' {
       completeWithZeros?: boolean;
     };
     dictionary?: {
-      adjectives?: {
+      adjectives: {
         [key: string]: string[];
       };
-      colors?: {
+      colors: {
         [key: string]: string[];
       };
-      nouns?: {
+      nouns: {
         [key: string]: string[];
       }
     };

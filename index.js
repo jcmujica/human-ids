@@ -40,15 +40,15 @@ function generateId(userSettings = {}) {
   }
 
   function getAdjectives() {
-    return settings.dictionary && settings.dictionary.adjectives ? settings.dictionary.adjectives : {};
+    return settings.dictionary && settings.dictionary.adjectives ? settings.dictionary.adjectives : dictionaries[lang].adjectives;
   }
 
   function getColors() {
-    return settings.dictionary && settings.dictionary.colors ? settings.dictionary.colors : {};
+    return settings.dictionary && settings.dictionary.colors ? settings.dictionary.colors : dictionaries[lang].colors;
   }
 
   function getNouns() {
-    return settings.dictionary && settings.dictionary.nouns ? settings.dictionary.nouns : {};
+    return settings.dictionary && settings.dictionary.nouns ? settings.dictionary.nouns : dictionaries[lang].nouns;
   }
 
   const parts = [];
