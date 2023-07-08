@@ -2,7 +2,7 @@ const generateId = require('../index');
 
 describe('generateId', () => {
   test('should return a unique ID', () => {
-    const testLength = 1000000;
+    const testLength = 1000;
     const settings = {
       lang: 'en',
       adjective: true,

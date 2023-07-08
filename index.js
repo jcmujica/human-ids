@@ -1,7 +1,7 @@
 const dictionaries = require('./dictionaries');
 
 const defaultSettings = {
-  lang: 'en',
+  lang: 'es',
   adjective: true,
   color: true,
   noun: true,
@@ -16,7 +16,7 @@ const defaultSettings = {
 };
 
 function generateId(userSettings = {}) {
-  const settings = Object.assign({}, defaultSettings, userSettings);
+  const settings = {...defaultSettings, ...userSettings};
   const lang = dictionaries[settings.lang] ? settings.lang : dictionaries[settings.lang?.split('-')[0]] ? settings.lang?.split('-')[0] : 'en';
   const useAdjective = settings.adjective || false;
   const useColor = settings.color || false;

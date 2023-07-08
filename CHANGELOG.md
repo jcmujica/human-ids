@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [1.0.12] - 2023-07-07
+
+### Fixed
+- Fixed bug with undefined disctionaries
 ## [1.0.11] - 2023-07-07
 
 ### Fixed
