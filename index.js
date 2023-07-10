@@ -7,6 +7,7 @@ const defaultSettings = {
   noun: true,
   randomOrder: false,
   separator: '-',
+  asObject: false,
   number: {
     min: 0,
     max: 999,
@@ -79,6 +80,15 @@ function generateId(userSettings = {}) {
 
   if (settings.randomOrder) {
     parts.sort(() => Math.random() - 0.5);
+  }
+
+  if (settings.asObject) {
+    const object = {};
+    const keys = ['adjective', 'color', 'noun', 'number'];
+    parts.forEach((part, index) => {
+      object[keys[index]] = part;
+    });
+    return object;
   }
 
   return parts.join(`${settings.separator}`);

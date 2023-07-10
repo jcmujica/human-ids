@@ -55,6 +55,9 @@ const settings = {
   adjective: true,
   color: true,
   noun: true,
+  randomOrder: false,
+  separator: '-',
+  asObject: false,
   number: {
     min: 0,
     max: 999,
@@ -76,6 +79,7 @@ The settings object allows you to customize the ID generation process. The avail
     noun: Set to true to include a noun in the ID (default: false).
     randomOrder: Set to true to include a random order in the ID segments (default: false).
     separator: Set to true to change a separator in the ID
+    asObject: Set to true to return an object with the words
     number: An object that configures the number part of the ID:
         min: The minimum value of the number (default: 0).
         max: The maximum value of the number (default: 999).

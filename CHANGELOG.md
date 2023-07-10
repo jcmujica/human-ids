@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [1.0.13] - 2023-07-10
+
+### Added
+- Added asObject setting to return an object with the words
 ## [1.0.12] - 2023-07-07
 
 ### Fixed

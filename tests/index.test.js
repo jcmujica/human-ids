@@ -10,6 +10,7 @@ describe('generateId', () => {
       noun: true,
       randomOrder: true,
       separator: '-',
+      asObject: false,
       number: {
         min: 0,
         max: 9999,

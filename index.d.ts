@@ -6,6 +6,7 @@ declare module 'human-ids' {
     noun?: boolean;
     randomOrder?: boolean;
     separator?: string;
+    asObject?: boolean;
     number?: {
       min?: number;
       max?: number;
