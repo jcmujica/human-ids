@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [1.0.14] - 2023-07-19
+
+### Added
+- Added semantics support to be passed as user settings to oder words according to the language
+- Added default semantics for english and spanish languages
+
 ## [1.0.13] - 2023-07-10
 
 ### Added

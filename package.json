@@ -1,6 +1,6 @@
 {
   "name": "human-ids",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "A library to generate human readable IDs",
   "main": "index.js",
   "scripts": {

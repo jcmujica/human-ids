@@ -7,6 +7,9 @@ declare module 'human-ids' {
     randomOrder?: boolean;
     separator?: string;
     asObject?: boolean;
+    semantics?: {
+      [key: string]: string['noun' | 'adjective' | 'color' | 'number'];
+    } | null;
     number?: {
       min?: number;
       max?: number;
