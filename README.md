@@ -1,139 +1,207 @@
 # Human IDs
 
-A library to generate human-readable IDs.
+[![npm version](https://img.shields.io/npm/v/human-ids.svg)](https://www.npmjs.com/package/human-ids)
+[![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
 
-## Description
+A zero-dependency TypeScript library that generates human-readable IDs by combining adjectives, colors, nouns, and numbers. Perfect for creating memorable identifiers for users, sessions, or any entity that needs a friendly name.
 
-Human IDs is a JavaScript library that allows you to generate human-readable IDs. The IDs consist of a combination of adjectives, colors, nouns, and numbers, creating unique and memorable identifiers.
+## Features
 
-Supports English and Spanish
-## Output example
-    bubbly-beige-fire-38
-    breezy-teal-faith-870
-    silly-indigo-imagination-440
-    genuine-turquoise-light-718
-    bubbly-purple-pen-450
-    genuine-silver-magic-935
-    delightful-brown-planet-642
-    cozy-orange-boat-449
-    excelente-morado-creatividad-829
-    energetico-oliva-libertad-765
+- **Human-readable**: Generated IDs like `stellar-jade-horizon-7392` are easy to remember and communicate
+- **Multi-language**: Built-in support for English and Spanish with proper word ordering
+- **Highly unique**: ~209 billion possible combinations per language
+- **Zero dependencies**: Lightweight and secure
+- **TypeScript**: Full type definitions with JSDoc documentation
+- **Customizable**: Configure separators, components, number ranges, and even provide custom dictionaries
+
 ## Installation
 
-To use Human IDs in your project, you can install it via npm:
-
-```she
+```bash
 npm install human-ids
 ```
-## Usage example
+
+## Quick Start
 
 ```javascript
-import humanId from 'human-ids'
+import generateId from 'human-ids';
 
-//If using a custom dictionary
-const customDictionary = {
-  adjectives: {
-    awesome: 'awesome',
-    amazing: 'amazing',
-    // ...
-  },
-  colors: {
-    red: 'red',
-    blue: 'blue',
-    // ...
-  },
-  nouns: {
-    cat: 'cat',
-    dog: 'dog',
-    // ...
-  },
-};
+// Generate a random ID
+const id = generateId();
+// => "stellar-jade-horizon-7392"
 
-// Initialize the settings object (these are the defaults)
-const settings = {
-  lang: 'en',
-  adjective: true,
-  color: true,
-  noun: true,
-  randomOrder: false,
-  separator: '-',
-  asObject: false,
-  semantics: {
-    es: ['noun', 'color', 'adjective', 'number'],
-    en: ['adjective', 'color', 'noun', 'number'],
-  },
+// Spanish
+const spanishId = generateId({ lang: 'es' });
+// => "aurora-esmeralda-brillante-4518"
+```
+
+## Output Examples
+
+```
+English:                          Spanish:
+bubbly-amber-phoenix-3847         aurora-cobalto-magnifico-6729
+stellar-jade-horizon-7392         cascada-esmeralda-valiente-1854
+cosmic-sapphire-nebula-9034       bosque-ambar-sereno-5043
+radiant-coral-serenity-2671       estrella-jade-luminoso-8156
+```
+
+## Usage
+
+### Basic Usage
+
+```javascript
+import generateId from 'human-ids';
+
+// Default: English, all components enabled
+const id = generateId();
+```
+
+### Configuration Options
+
+```javascript
+const id = generateId({
+  lang: 'en',              // Language: 'en' or 'es'
+  adjective: true,         // Include adjective
+  color: true,             // Include color
+  noun: true,              // Include noun
+  separator: '-',          // Component separator
+  randomOrder: false,      // Shuffle component order
+  asObject: false,         // Return object instead of string
   number: {
-    min: 0,
-    max: 999,
-    sets: 1,
-    completeWithZeros: false,
-  },
-};
-
-// Generate an ID using the function
-console.log(humanId())
+    min: 0,                // Minimum number value
+    max: 9999,             // Maximum number value
+    sets: 1,               // Number of number components
+    completeWithZeros: false // Pad with leading zeros
+  }
+});
 ```
-## Configuration
 
-The settings object allows you to customize the ID generation process. The available options are:
+### Examples
 
-    userSettings (optional): An object containing various options to customize the generated ID. It includes the following properties:
-        lang (string): The language for the ID generation. You can specify the language code (e.g., 'en' for English, 'es' for Spanish).
-        adjective (boolean): Include an adjective component in the generated ID. (Default: true)
-        color (boolean): Include a color component in the generated ID. (Default: true)
-        noun (boolean): Include a noun component in the generated ID. (Default: true)
-        randomOrder (boolean): Randomize the order of ID components. (Default: false)
-        separator (string): The separator used to join the ID components. (Default: '-')
-        asObject (boolean): Return the ID as an object instead of a string. (Default: false)
-        semantics (object|null): An object specifying the order of components based on language. For example, you can set the order for Spanish using "es": ['noun', 'color', 'adjective', 'number'].
-        number (object): An object containing settings for the number component:
-            min (number): The minimum value for the number component. (Default: 0)
-            max (number): The maximum value for the number component. (Default: 999)
-            completeWithZeros (boolean): Pad the number with leading zeros to match the maximum length. (Default: false)
-        dictionary (object): An object containing custom dictionaries for adjectives, colors, and nouns:
-            adjectives (object): A dictionary of adjectives for different languages.
-            colors (object): A dictionary of colors for different languages.
-            nouns (object): A dictionary of nouns for different languages.
-
-## Return Value
-The generateId function returns a unique identifier as a string by default. If the asObject option is set to true, the function returns an object containing the individual components of the ID.
-
-## Examples
-
-### Generate an ID with default settings:
+#### Without Colors
 
 ```javascript
-
-const id = generateId({ lang: 'en' });
-console.log(id); // Example output: "green-house-123"
+generateId({ color: false });
+// => "happy-cat-3456"
 ```
 
-### Generate an ID as an object:
+#### Custom Separator
 
 ```javascript
-
-const idObject = generateId({ lang: 'es', asObject: true });
-console.log(idObject);
-// Example output:
-// {
-//   adjective: 'casa',
-//   color: 'verde',
-//   noun: 'montaña',
-//   number: '0123'
-// }
+generateId({ separator: '_' });
+// => "happy_blue_cat_9012"
 ```
-## Test Results
 
-While the generated IDs strive for uniqueness, it's important to note that absolute uniqueness cannot be guaranteed, especially with a finite set of words and numbers. During the uniqueness test, the generator produced 999,722 unique IDs out of the expected 1,000,000. This means that a small number of duplicates may occur in practice.
-License
+#### Multiple Number Sets
 
-This project is licensed under the ISC License.
+```javascript
+generateId({ number: { sets: 2 } });
+// => "happy-blue-cat-1234-5678"
+```
 
-Feel free to modify the `README.md` file to fit your project's specific details and requirements.
+#### Zero-Padded Numbers
+
+```javascript
+generateId({ number: { min: 0, max: 999, completeWithZeros: true } });
+// => "happy-blue-cat-042"
+```
+
+#### Get ID as Object
+
+```javascript
+generateId({ asObject: true });
+// => { adjective: 'happy', color: 'blue', noun: 'cat', number1: '1234' }
+```
+
+#### Random Component Order
+
+```javascript
+generateId({ randomOrder: true });
+// => "1234-cat-happy-blue" (random each time)
+```
+
+#### Custom Dictionary
+
+```javascript
+generateId({
+  dictionary: {
+    adjectives: { cool: 'cool', awesome: 'awesome' },
+    colors: { red: 'red', blue: 'blue' },
+    nouns: { rocket: 'rocket', star: 'star' }
+  }
+});
+// => "cool-red-rocket-5678"
+```
+
+## CommonJS Support
+
+```javascript
+// Default import
+const generateId = require('human-ids');
+
+// Named imports
+const { generateId, dictionaries } = require('human-ids');
+```
+
+## Uniqueness & Collision Probability
+
+The library includes extensive dictionaries to maximize uniqueness:
+
+| Language | Adjectives | Colors | Nouns | Numbers (default) | Total Combinations |
+|----------|------------|--------|-------|-------------------|-------------------|
+| English  | 372        | 120    | 469   | 10,000 (0-9999)   | ~209 billion      |
+| Spanish  | 372        | 120    | 469   | 10,000 (0-9999)   | ~209 billion      |
+
+With ~209 billion combinations, collision probability is negligible for most use cases. For even higher uniqueness:
+
+- **Increase number range**: `{ number: { max: 99999 } }` → 10x more combinations
+- **Use multiple number sets**: `{ number: { sets: 2 } }` → 10,000x more combinations
+- **Combine both**: ~20 quadrillion combinations
+
+> **Note**: While collision probability is extremely low, absolute uniqueness cannot be guaranteed with random generation. For guaranteed uniqueness, implement collision detection with your datastore.
+
+## API Reference
+
+### `generateId(settings?): string | IdParts`
+
+Generates a human-readable ID.
+
+#### Parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `lang` | `string` | `'en'` | Language code (`'en'` or `'es'`) |
+| `adjective` | `boolean` | `true` | Include adjective component |
+| `color` | `boolean` | `true` | Include color component |
+| `noun` | `boolean` | `true` | Include noun component |
+| `separator` | `string` | `'-'` | Separator between components |
+| `randomOrder` | `boolean` | `false` | Randomize component order |
+| `asObject` | `boolean` | `false` | Return object instead of string |
+| `number.min` | `number` | `0` | Minimum number value |
+| `number.max` | `number` | `9999` | Maximum number value |
+| `number.sets` | `number` | `1` | Number of number components |
+| `number.completeWithZeros` | `boolean` | `false` | Pad numbers with leading zeros |
+| `dictionary` | `Partial<Dictionary>` | - | Custom word dictionary |
+
+#### Returns
+
+- **String** (default): `"adjective-color-noun-number"`
+- **Object** (when `asObject: true`): `{ adjective, color, noun, number1, ... }`
+
+### `dictionaries`
+
+Access the built-in word dictionaries:
+
+```javascript
+import { dictionaries } from 'human-ids';
+
+console.log(Object.keys(dictionaries));        // ['en', 'es']
+console.log(Object.keys(dictionaries.en));     // ['adjectives', 'colors', 'nouns']
+```
 
 ## Contributing
 
-Contributions and bug reports are welcome! Feel free to open an issue or submit a pull request on the GitHub repository. Please ensure that your code follows the project's coding standards and includes appropriate test coverage.
+Contributions and bug reports are welcome! Feel free to open an issue or submit a pull request on the [GitHub repository](https://github.com/jcmujica/human-ids).
+
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the [ISC License](https://opensource.org/licenses/ISC).

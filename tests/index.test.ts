@@ -1,4 +1,4 @@
-const generateId = require('../index');
+import { generateId } from '../src';
 
 describe('generateId', () => {
   test('should return a unique ID with all possible scenarios', () => {

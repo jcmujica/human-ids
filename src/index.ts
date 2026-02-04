@@ -1,0 +1,393 @@
+/**
+ * Human IDs - A library to generate human-readable identifiers
+ * @packageDocumentation
+ * @module human-ids
+ */
+
+import { dictionaries, resolveDictionary } from './dictionaries';
+
+/**
+ * Dictionary containing word lists for ID generation.
+ * Each property maps word keys to their display values.
+ *
+ * @example
+ * ```typescript
+ * const customDictionary: Dictionary = {
+ *   adjectives: { happy: 'happy', bright: 'bright' },
+ *   colors: { red: 'red', blue: 'blue' },
+ *   nouns: { cat: 'cat', dog: 'dog' }
+ * };
+ * ```
+ */
+export interface Dictionary {
+  /** Map of adjective keys to their display values */
+  adjectives: Record<string, string>;
+  /** Map of color keys to their display values */
+  colors: Record<string, string>;
+  /** Map of noun keys to their display values */
+  nouns: Record<string, string>;
+}
+
+/**
+ * Object containing the individual parts of a generated ID.
+ * Returned when `asObject: true` is set in the settings.
+ *
+ * @example
+ * ```typescript
+ * const parts: IdParts = {
+ *   adjective: 'happy',
+ *   color: 'blue',
+ *   noun: 'cat',
+ *   number1: '1234'
+ * };
+ * ```
+ */
+export interface IdParts {
+  /** The adjective component (if enabled) */
+  adjective?: string;
+  /** The color component (if enabled) */
+  color?: string;
+  /** The noun component (if enabled) */
+  noun?: string;
+  /** Additional properties for number components (number1, number2, etc.) */
+  [key: string]: string | undefined;
+}
+
+/**
+ * Configuration options for the number component(s) of generated IDs.
+ *
+ * @example
+ * ```typescript
+ * // Generate IDs with numbers between 1000-9999, zero-padded
+ * const numberSettings: NumberSettings = {
+ *   min: 1000,
+ *   max: 9999,
+ *   sets: 1,
+ *   completeWithZeros: true
+ * };
+ * ```
+ */
+export interface NumberSettings {
+  /**
+   * Minimum value for random numbers (inclusive)
+   * @default 0
+   */
+  min?: number;
+  /**
+   * Maximum value for random numbers (inclusive)
+   * @default 9999
+   */
+  max?: number;
+  /**
+   * Number of separate number components to include
+   * @default 1
+   * @example
+   * // With sets: 2, generates: "happy-blue-cat-1234-5678"
+   */
+  sets?: number;
+  /**
+   * Whether to pad numbers with leading zeros to match max length
+   * @default false
+   * @example
+   * // With max: 9999 and completeWithZeros: true
+   * // Number 42 becomes "0042"
+   */
+  completeWithZeros?: boolean;
+}
+
+/**
+ * Maps language codes to their component ordering.
+ * Defines the order in which ID parts appear for each language.
+ *
+ * @example
+ * ```typescript
+ * const semantics: SemanticsMap = {
+ *   en: ['adjective', 'color', 'noun', 'number'], // happy-blue-cat-123
+ *   es: ['noun', 'color', 'adjective', 'number']  // gato-azul-feliz-123
+ * };
+ * ```
+ */
+export interface SemanticsMap {
+  [lang: string]: Array<'noun' | 'adjective' | 'color' | 'number'>;
+}
+
+/**
+ * Configuration options for the ID generator.
+ *
+ * @example
+ * ```typescript
+ * // Basic usage with Spanish
+ * const settings: IdGeneratorSettings = {
+ *   lang: 'es',
+ *   separator: '_'
+ * };
+ *
+ * // Advanced usage with custom dictionary
+ * const advancedSettings: IdGeneratorSettings = {
+ *   lang: 'en',
+ *   adjective: true,
+ *   color: false,  // Exclude colors
+ *   noun: true,
+ *   number: { min: 100, max: 999 },
+ *   dictionary: {
+ *     adjectives: { cool: 'cool', awesome: 'awesome' }
+ *   }
+ * };
+ * ```
+ */
+export interface IdGeneratorSettings {
+  /**
+   * Language code for built-in dictionaries ('en' or 'es').
+   * Also accepts locale codes like 'en-US' (falls back to base language).
+   * @default 'en'
+   */
+  lang?: string;
+  /**
+   * Whether to include an adjective in the ID
+   * @default true
+   */
+  adjective?: boolean;
+  /**
+   * Whether to include a color in the ID
+   * @default true
+   */
+  color?: boolean;
+  /**
+   * Whether to include a noun in the ID
+   * @default true
+   */
+  noun?: boolean;
+  /**
+   * Whether to randomize the order of components
+   * @default false
+   */
+  randomOrder?: boolean;
+  /**
+   * Character(s) used to separate ID components
+   * @default '-'
+   */
+  separator?: string;
+  /**
+   * Return an object with individual parts instead of a string
+   * @default false
+   */
+  asObject?: boolean;
+  /**
+   * Custom component ordering per language.
+   * @default { en: ['adjective', 'color', 'noun', 'number'], es: ['noun', 'color', 'adjective', 'number'] }
+   */
+  semantics?: SemanticsMap;
+  /**
+   * Configuration for the number component(s)
+   * @default { min: 0, max: 9999, sets: 1, completeWithZeros: false }
+   */
+  number?: NumberSettings;
+  /**
+   * Custom dictionary to use (can partially override built-in words)
+   */
+  dictionary?: Partial<Dictionary>;
+}
+
+/**
+ * Default settings applied when options are not specified.
+ * @internal
+ */
+const defaultSettings: Required<Pick<IdGeneratorSettings, 'lang' | 'adjective' | 'color' | 'noun' | 'randomOrder' | 'separator' | 'asObject' | 'semantics' | 'number'>> = {
+  lang: 'en',
+  adjective: true,
+  color: true,
+  noun: true,
+  randomOrder: false,
+  separator: '-',
+  asObject: false,
+  semantics: {
+    es: ['noun', 'color', 'adjective', 'number'],
+    en: ['adjective', 'color', 'noun', 'number'],
+  },
+  number: {
+    min: 0,
+    max: 9999,
+    sets: 1,
+    completeWithZeros: false,
+  },
+};
+
+/**
+ * Generates a random integer between min and max (inclusive).
+ * @param min - Minimum value (inclusive)
+ * @param max - Maximum value (inclusive)
+ * @returns Random integer in the range [min, max]
+ * @internal
+ */
+function getRandomNumber(min: number, max: number): number {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+/**
+ * Picks a random element from an array.
+ * @param arr - Array to pick from
+ * @returns Random element from the array
+ * @internal
+ */
+function pickRandom(arr: string[]): string {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+/**
+ * Resolves a language code to a supported language.
+ * Supports full locale codes (e.g., 'en-US' resolves to 'en').
+ * Falls back to 'en' if language is not supported.
+ * @param lang - Language code to resolve
+ * @returns Resolved language code ('en' or 'es')
+ * @internal
+ */
+function resolveLang(lang: string): string {
+  if (dictionaries[lang]) return lang;
+  const base = lang.split('-')[0];
+  if (dictionaries[base]) return base;
+  return 'en';
+}
+
+/**
+ * Generates a human-readable ID by combining adjectives, colors, nouns, and numbers.
+ *
+ * @param settings - Configuration options (with asObject: true)
+ * @returns Object containing individual ID components
+ *
+ * @example
+ * ```typescript
+ * // Get ID as object
+ * const parts = generateId({ asObject: true });
+ * // { adjective: 'happy', color: 'blue', noun: 'cat', number1: '1234' }
+ * ```
+ */
+function generateId(settings?: IdGeneratorSettings & { asObject: true }): IdParts;
+/**
+ * Generates a human-readable ID by combining adjectives, colors, nouns, and numbers.
+ *
+ * @param settings - Configuration options
+ * @returns Human-readable ID string
+ *
+ * @example
+ * ```typescript
+ * // Basic usage - returns string like "happy-blue-cat-1234"
+ * const id = generateId();
+ *
+ * // Spanish language
+ * const spanishId = generateId({ lang: 'es' });
+ * // "gato-azul-feliz-5678"
+ *
+ * // Custom separator
+ * const underscoreId = generateId({ separator: '_' });
+ * // "happy_blue_cat_9012"
+ *
+ * // Without colors
+ * const noColorId = generateId({ color: false });
+ * // "happy-cat-3456"
+ *
+ * // Custom number range
+ * const customNumberId = generateId({
+ *   number: { min: 100, max: 999, completeWithZeros: true }
+ * });
+ * // "happy-blue-cat-042"
+ *
+ * // Multiple number sets
+ * const multiNumberId = generateId({ number: { sets: 2 } });
+ * // "happy-blue-cat-1234-5678"
+ *
+ * // Random component order
+ * const randomOrderId = generateId({ randomOrder: true });
+ * // "1234-cat-happy-blue" (random order each time)
+ *
+ * // Custom dictionary (partial override)
+ * const customId = generateId({
+ *   dictionary: {
+ *     adjectives: { cool: 'cool', awesome: 'awesome' }
+ *   }
+ * });
+ * ```
+ */
+function generateId(settings?: IdGeneratorSettings): string;
+function generateId(userSettings: IdGeneratorSettings = {}): string | IdParts {
+  const settings = { ...defaultSettings, ...userSettings };
+  const lang = resolveLang(settings.lang);
+  const numberMin =
+    settings.number && settings.number.min !== undefined ? settings.number.min : 0;
+  const numberMax =
+    settings.number && settings.number.max !== undefined ? settings.number.max : 999;
+  const numberSets = (settings.number && settings.number.sets) || 1;
+  const completeWithZeros =
+    (settings.number && settings.number.completeWithZeros) || false;
+
+  // Resolve dictionary arrays (cached for built-in dictionaries)
+  const customDict = settings.dictionary;
+  const builtinDict = dictionaries[lang];
+  const resolved = resolveDictionary(
+    customDict
+      ? {
+          adjectives: customDict.adjectives ?? builtinDict.adjectives,
+          colors: customDict.colors ?? builtinDict.colors,
+          nouns: customDict.nouns ?? builtinDict.nouns,
+        }
+      : builtinDict
+  );
+
+  const parts: Record<string, string> = {};
+
+  if (settings.adjective) {
+    parts.adjective = pickRandom(resolved.adjectives);
+  }
+
+  if (settings.color) {
+    parts.color = pickRandom(resolved.colors);
+  }
+
+  if (settings.noun) {
+    parts.noun = pickRandom(resolved.nouns);
+  }
+
+  const maxNumberLength = completeWithZeros ? numberMax.toString().length : 0;
+  for (let i = 0; i < numberSets; i++) {
+    const num = getRandomNumber(numberMin, numberMax);
+    parts[`number${i + 1}`] = completeWithZeros
+      ? num.toString().padStart(maxNumberLength, '0')
+      : num.toString();
+  }
+
+  if (settings.randomOrder) {
+    const keys = Object.keys(parts);
+    const shuffledKeys = keys.sort(() => Math.random() - 0.5);
+    const shuffledParts: string[] = [];
+    for (const key of shuffledKeys) {
+      shuffledParts.push(parts[key]);
+    }
+    return shuffledParts.join(settings.separator);
+  }
+
+  if (settings.asObject) {
+    return parts;
+  }
+
+  const semantics = (settings.semantics && settings.semantics[lang]) || settings.semantics!.en;
+
+  const result = semantics.map((key) => {
+    if (key !== 'number') return parts[key];
+
+    // Collect all number parts directly instead of filtering with isNaN
+    const numberParts: string[] = [];
+    for (let i = 1; i <= numberSets; i++) {
+      numberParts.push(parts[`number${i}`]);
+    }
+    return numberParts.join('-');
+  });
+  return result.join(settings.separator);
+}
+
+export { generateId, dictionaries };
+
+// CJS backwards compatibility
+// Allows: const generateId = require('human-ids')
+// And:    const { generateId, dictionaries } = require('human-ids')
+module.exports = generateId;
+module.exports.generateId = generateId;
+module.exports.dictionaries = dictionaries;

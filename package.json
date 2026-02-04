@@ -1,28 +1,55 @@
 {
   "name": "human-ids",
-  "version": "1.0.14",
-  "description": "A library to generate human readable IDs",
-  "main": "index.js",
+  "version": "1.2.0",
+  "description": "A zero-dependency TypeScript library to generate human-readable IDs. Supports English and Spanish with ~209 billion unique combinations.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build",
     "test": "jest --reporters=default --reporters=jest-html-reporter"
   },
   "keywords": [
-    "readable",
+    "human-readable",
+    "id",
     "ids",
-    "humans",
-    "for-humans",
+    "identifier",
+    "generator",
+    "unique",
+    "uuid-alternative",
+    "readable-id",
+    "friendly-id",
     "human-ids",
-    "simple",
-    "simple-ids"
+    "typescript",
+    "english",
+    "spanish",
+    "i18n"
   ],
   "author": "JC Mujica",
   "license": "ISC",
   "devDependencies": {
+    "@types/jest": "^30.0.0",
     "jest": "^29.6.1",
-    "jest-html-reporter": "^3.10.1"
+    "jest-html-reporter": "^3.10.1",
+    "ts-jest": "^29.4.6",
+    "typescript": "^5.9.3"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/jcmujica/human-ids"
+    "url": "git+https://github.com/jcmujica/human-ids.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jcmujica/human-ids/issues"
+  },
+  "homepage": "https://github.com/jcmujica/human-ids#readme",
+  "engines": {
+    "node": ">=14.0.0"
   }
 }
