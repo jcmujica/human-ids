@@ -2,7 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.2.0] - 2025-02-04
+## [2.0.0] - 2026-02-25
+
+### Breaking Changes
+- **Dictionary type changed**: `Dictionary.adjectives`, `.colors`, and `.nouns` are now `string[]` instead of `Record<string, string>`. Custom dictionaries must be updated from object form (`{ cool: 'cool' }`) to array form (`['cool']`).
+- **Removed bare CJS default export**: `const generateId = require('human-ids')` (without destructuring) no longer works. Use `const { generateId } = require('human-ids')` instead.
+
+### Added
+- **ESM support**: Package now ships both CommonJS (`dist/cjs/`) and ES Module (`dist/esm/`) builds with a full `exports` map. Bundlers and native ESM consumers are automatically served the correct build.
+
+### Fixed
+- **ESM crash**: The previous release would throw `ReferenceError: module is not defined` at module load time when imported as ESM. This is now fixed.
+
+### Changed
+- **Smaller package**: Dictionary files are ~47% smaller by storing word lists as plain arrays instead of key-value objects where key === value.
+- Internal `resolveDictionary` helper and its `Map` cache removed — no longer needed now that dictionaries are already arrays.
+
+## [1.2.0] - 2026-02-04
 
 ### Added
 - **Massively expanded dictionaries**: Both English and Spanish now have 372 adjectives, 120 colors, and 469 nouns (~209 billion combinations each)

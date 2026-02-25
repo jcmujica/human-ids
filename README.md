@@ -11,6 +11,7 @@ A zero-dependency TypeScript library that generates human-readable IDs by combin
 - **Multi-language**: Built-in support for English and Spanish with proper word ordering
 - **Highly unique**: ~209 billion possible combinations per language
 - **Zero dependencies**: Lightweight and secure
+- **ESM + CJS**: Ships both ES Module and CommonJS builds with a full `exports` map
 - **TypeScript**: Full type definitions with JSDoc documentation
 - **Customizable**: Configure separators, components, number ranges, and even provide custom dictionaries
 
@@ -23,7 +24,7 @@ npm install human-ids
 ## Quick Start
 
 ```javascript
-import generateId from 'human-ids';
+import { generateId } from 'human-ids';
 
 // Generate a random ID
 const id = generateId();
@@ -49,7 +50,7 @@ radiant-coral-serenity-2671       estrella-jade-luminoso-8156
 ### Basic Usage
 
 ```javascript
-import generateId from 'human-ids';
+import { generateId } from 'human-ids';
 
 // Default: English, all components enabled
 const id = generateId();
@@ -124,9 +125,9 @@ generateId({ randomOrder: true });
 ```javascript
 generateId({
   dictionary: {
-    adjectives: { cool: 'cool', awesome: 'awesome' },
-    colors: { red: 'red', blue: 'blue' },
-    nouns: { rocket: 'rocket', star: 'star' }
+    adjectives: ['cool', 'awesome'],
+    colors: ['red', 'blue'],
+    nouns: ['rocket', 'star']
   }
 });
 // => "cool-red-rocket-5678"
@@ -135,10 +136,6 @@ generateId({
 ## CommonJS Support
 
 ```javascript
-// Default import
-const generateId = require('human-ids');
-
-// Named imports
 const { generateId, dictionaries } = require('human-ids');
 ```
 
@@ -196,6 +193,7 @@ import { dictionaries } from 'human-ids';
 
 console.log(Object.keys(dictionaries));        // ['en', 'es']
 console.log(Object.keys(dictionaries.en));     // ['adjectives', 'colors', 'nouns']
+console.log(dictionaries.en.adjectives[0]);    // 'silly'
 ```
 
 ## Contributing

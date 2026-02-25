@@ -4,7 +4,7 @@
  * @module human-ids
  */
 
-import { dictionaries, resolveDictionary } from './dictionaries';
+import { dictionaries } from './dictionaries';
 
 /**
  * Dictionary containing word lists for ID generation.
@@ -20,12 +20,12 @@ import { dictionaries, resolveDictionary } from './dictionaries';
  * ```
  */
 export interface Dictionary {
-  /** Map of adjective keys to their display values */
-  adjectives: Record<string, string>;
-  /** Map of color keys to their display values */
-  colors: Record<string, string>;
-  /** Map of noun keys to their display values */
-  nouns: Record<string, string>;
+  /** List of adjective words */
+  adjectives: string[];
+  /** List of color words */
+  colors: string[];
+  /** List of noun words */
+  nouns: string[];
 }
 
 /**
@@ -319,18 +319,15 @@ function generateId(userSettings: IdGeneratorSettings = {}): string | IdParts {
   const completeWithZeros =
     (settings.number && settings.number.completeWithZeros) || false;
 
-  // Resolve dictionary arrays (cached for built-in dictionaries)
   const customDict = settings.dictionary;
   const builtinDict = dictionaries[lang];
-  const resolved = resolveDictionary(
-    customDict
-      ? {
-          adjectives: customDict.adjectives ?? builtinDict.adjectives,
-          colors: customDict.colors ?? builtinDict.colors,
-          nouns: customDict.nouns ?? builtinDict.nouns,
-        }
-      : builtinDict
-  );
+  const resolved: Dictionary = customDict
+    ? {
+        adjectives: customDict.adjectives ? [...new Set(customDict.adjectives)] : builtinDict.adjectives,
+        colors: customDict.colors ? [...new Set(customDict.colors)] : builtinDict.colors,
+        nouns: customDict.nouns ? [...new Set(customDict.nouns)] : builtinDict.nouns,
+      }
+    : builtinDict;
 
   const parts: Record<string, string> = {};
 
@@ -384,10 +381,3 @@ function generateId(userSettings: IdGeneratorSettings = {}): string | IdParts {
 }
 
 export { generateId, dictionaries };
-
-// CJS backwards compatibility
-// Allows: const generateId = require('human-ids')
-// And:    const { generateId, dictionaries } = require('human-ids')
-module.exports = generateId;
-module.exports.generateId = generateId;
-module.exports.dictionaries = dictionaries;
