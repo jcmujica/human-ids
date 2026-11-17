@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.1.0] - 2026-11-17
+
+### Added
+- **`random` option**: inject the source of randomness (any function returning a float in [0, 1)). Defaults to `Math.random`, so existing calls are unchanged.
+- **`cryptoRandom` export**: a Web Crypto–backed source for IDs that must be unguessable, such as invite codes or passphrases.
+
+### Fixed
+- **`randomOrder` shuffle is now unbiased**: replaced the random-comparator `sort` with a Fisher–Yates shuffle that also uses the configured `random` source.
+
 ## [2.0.0] - 2026-02-25
 
 ### Breaking Changes

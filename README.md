@@ -67,6 +67,7 @@ const id = generateId({
   separator: '-',          // Component separator
   randomOrder: false,      // Shuffle component order
   asObject: false,         // Return object instead of string
+  random: Math.random,     // Source of randomness in [0, 1)
   number: {
     min: 0,                // Minimum number value
     max: 9999,             // Maximum number value
@@ -133,10 +134,26 @@ generateId({
 // => "cool-red-rocket-5678"
 ```
 
+#### Unguessable IDs
+
+By default IDs use `Math.random`, which is fine for labels but predictable. When an
+ID doubles as a secret (an invite code, a passphrase), pass a cryptographically
+secure source. `cryptoRandom` uses the Web Crypto API (browsers, Node.js 19+,
+Deno, Bun, edge runtimes):
+
+```javascript
+import { generateId, cryptoRandom } from 'human-ids';
+
+generateId({ random: cryptoRandom });
+```
+
+Any function returning a float in [0, 1) works, which also makes IDs reproducible
+in tests when you pass a seeded generator.
+
 ## CommonJS Support
 
 ```javascript
-const { generateId, dictionaries } = require('human-ids');
+const { generateId, cryptoRandom, dictionaries } = require('human-ids');
 ```
 
 ## Uniqueness & Collision Probability
@@ -173,6 +190,7 @@ Generates a human-readable ID.
 | `separator` | `string` | `'-'` | Separator between components |
 | `randomOrder` | `boolean` | `false` | Randomize component order |
 | `asObject` | `boolean` | `false` | Return object instead of string |
+| `random` | `() => number` | `Math.random` | Source of randomness in [0, 1); pass `cryptoRandom` for unguessable IDs |
 | `number.min` | `number` | `0` | Minimum number value |
 | `number.max` | `number` | `9999` | Maximum number value |
 | `number.sets` | `number` | `1` | Number of number components |

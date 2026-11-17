@@ -186,6 +186,20 @@ export interface IdGeneratorSettings {
    * Custom dictionary to use (can partially override built-in words)
    */
   dictionary?: Partial<Dictionary>;
+  /**
+   * Source of randomness: a function returning a float in [0, 1), like
+   * `Math.random`. Pass {@link cryptoRandom} (or your own CSPRNG-backed
+   * function) when an ID doubles as a secret, such as an invite code or a
+   * passphrase, so it cannot be predicted from earlier IDs.
+   * @default Math.random
+   *
+   * @example
+   * ```typescript
+   * import { generateId, cryptoRandom } from 'human-ids';
+   * generateId({ random: cryptoRandom });
+   * ```
+   */
+  random?: () => number;
 }
 
 /**
@@ -213,24 +227,61 @@ const defaultSettings: Required<Pick<IdGeneratorSettings, 'lang' | 'adjective' |
 };
 
 /**
+ * A `random` source backed by the Web Crypto API, for IDs that must be
+ * unguessable. Available in browsers, Node.js 19+, Deno, Bun and edge runtimes;
+ * throws where `globalThis.crypto` is missing.
+ *
+ * @returns A float in [0, 1)
+ *
+ * @example
+ * ```typescript
+ * generateId({ random: cryptoRandom });
+ * ```
+ */
+function cryptoRandom(): number {
+  const buffer = new Uint32Array(1);
+  globalThis.crypto.getRandomValues(buffer);
+  return buffer[0] / 0x100000000;
+}
+
+/**
  * Generates a random integer between min and max (inclusive).
  * @param min - Minimum value (inclusive)
  * @param max - Maximum value (inclusive)
+ * @param random - Source of randomness in [0, 1)
  * @returns Random integer in the range [min, max]
  * @internal
  */
-function getRandomNumber(min: number, max: number): number {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+function getRandomNumber(min: number, max: number, random: () => number): number {
+  return Math.floor(random() * (max - min + 1)) + min;
 }
 
 /**
  * Picks a random element from an array.
  * @param arr - Array to pick from
+ * @param random - Source of randomness in [0, 1)
  * @returns Random element from the array
  * @internal
  */
-function pickRandom(arr: string[]): string {
-  return arr[Math.floor(Math.random() * arr.length)];
+function pickRandom(arr: string[], random: () => number): string {
+  return arr[Math.floor(random() * arr.length)];
+}
+
+/**
+ * Fisher-Yates shuffle. A `sort` with a random comparator is biased and its
+ * output depends on the engine's sort algorithm.
+ * @param items - Items to shuffle (not mutated)
+ * @param random - Source of randomness in [0, 1)
+ * @returns A shuffled copy
+ * @internal
+ */
+function shuffle<T>(items: readonly T[], random: () => number): T[] {
+  const result = [...items];
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
 }
 
 /**
@@ -310,6 +361,7 @@ function generateId(settings?: IdGeneratorSettings & { asObject: true }): IdPart
 function generateId(settings?: IdGeneratorSettings): string;
 function generateId(userSettings: IdGeneratorSettings = {}): string | IdParts {
   const settings = { ...defaultSettings, ...userSettings };
+  const random = settings.random || Math.random;
   const lang = resolveLang(settings.lang);
   const numberMin =
     settings.number && settings.number.min !== undefined ? settings.number.min : 0;
@@ -332,33 +384,29 @@ function generateId(userSettings: IdGeneratorSettings = {}): string | IdParts {
   const parts: Record<string, string> = {};
 
   if (settings.adjective) {
-    parts.adjective = pickRandom(resolved.adjectives);
+    parts.adjective = pickRandom(resolved.adjectives, random);
   }
 
   if (settings.color) {
-    parts.color = pickRandom(resolved.colors);
+    parts.color = pickRandom(resolved.colors, random);
   }
 
   if (settings.noun) {
-    parts.noun = pickRandom(resolved.nouns);
+    parts.noun = pickRandom(resolved.nouns, random);
   }
 
   const maxNumberLength = completeWithZeros ? numberMax.toString().length : 0;
   for (let i = 0; i < numberSets; i++) {
-    const num = getRandomNumber(numberMin, numberMax);
+    const num = getRandomNumber(numberMin, numberMax, random);
     parts[`number${i + 1}`] = completeWithZeros
       ? num.toString().padStart(maxNumberLength, '0')
       : num.toString();
   }
 
   if (settings.randomOrder) {
-    const keys = Object.keys(parts);
-    const shuffledKeys = keys.sort(() => Math.random() - 0.5);
-    const shuffledParts: string[] = [];
-    for (const key of shuffledKeys) {
-      shuffledParts.push(parts[key]);
-    }
-    return shuffledParts.join(settings.separator);
+    return shuffle(Object.keys(parts), random)
+      .map((key) => parts[key])
+      .join(settings.separator);
   }
 
   if (settings.asObject) {
@@ -380,4 +428,4 @@ function generateId(userSettings: IdGeneratorSettings = {}): string | IdParts {
   return result.join(settings.separator);
 }
 
-export { generateId, dictionaries };
+export { generateId, cryptoRandom, dictionaries };
